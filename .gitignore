@@ -1,0 +1,37 @@
+# SvelteKit
+.svelte-kit/
+build/
+
+# Package managers
+node_modules
+pnpm-lock.yaml
+yarn.lock
+
+# Output
+.output
+.vercel
+.netlify
+.wrangler
+/build
+/dist
+/coverage
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.*
+!.env.example
+!.env.test
+
+# IDE
+.idea
+.vscode
+*.sublime-project
+*.sublime-workspace
+
+# Temporary files
+*.ts.timestamp-*
