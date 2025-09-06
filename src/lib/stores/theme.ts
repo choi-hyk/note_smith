@@ -19,6 +19,7 @@ export function applyTheme(t: Theme) {
 	if (t === 'dark') root.classList.add('dark');
 	else root.classList.remove('dark');
 	localStorage.setItem('theme', t);
+	console.log(`Applied theme: ${t}`);
 }
 
 export function toggleTheme() {

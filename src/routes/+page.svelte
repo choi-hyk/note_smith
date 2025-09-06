@@ -1,18 +1,33 @@
+<svelte:options runes={true} />
+
 <script lang="ts">
 	import CodeEditor from '$lib/components/CodeEditor.svelte';
 	import { marked } from 'marked';
-	let textValue: string = '';
-	let renderedHtml: string | Promise<string>;
+	import { docStore } from '$lib/stores/doc';
 
-	$: renderedHtml = marked.parse(textValue);
+	marked.setOptions({ gfm: true, breaks: true });
+
+	let textValue = $state<string>('');
+	let renderedHtml = $derived(marked.parse(textValue) as string);
+
+	function normalizeNewlines(s: string) {
+		return s.replace(/\r\n/g, '\n');
+	}
+
+	$effect(() => {
+		const doc = $docStore;
+		if (!doc) return;
+		textValue = normalizeNewlines(doc.content);
+		docStore.set(null);
+	});
 </script>
 
-<section class="flex h-full w-full flex-row">
-	<div class="h-full w-3/5 border-r-2 border-gray-700 p-3 dark:border-gray-300">
+<section class="flex h-screen w-screen">
+	<div class="flex flex-1 flex-col border-r p-4">
 		<CodeEditor bind:value={textValue} language="markdown" />
 	</div>
 
-	<div class="h-full w-2/5 overflow-y-auto p-4">
+	<article class="prose max-w-none flex-1 overflow-y-auto p-4 dark:prose-invert">
 		{@html renderedHtml}
-	</div>
+	</article>
 </section>
