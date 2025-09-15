@@ -1,4 +1,11 @@
-import { invoke } from '@tauri-apps/api/core';
+// src/lib/utils/fs.ts
+type FS = typeof import('@tauri-apps/plugin-fs');
+type Dialog = typeof import('@tauri-apps/plugin-dialog');
+
+let fsMod: Promise<FS> | null = null;
+let dialogMod: Promise<Dialog> | null = null;
+const getFs = () => (fsMod ??= import('@tauri-apps/plugin-fs'));
+const getDialog = () => (dialogMod ??= import('@tauri-apps/plugin-dialog'));
 
 export const TEXT_EXTS = [
 	'txt',
@@ -20,7 +27,6 @@ export const TEXT_EXTS = [
 	'yml',
 	'xml'
 ];
-
 export const CODE_EXTS = [
 	'js',
 	'jsx',
@@ -76,68 +82,49 @@ export const CODE_EXTS = [
 	'sql'
 ];
 
-export const ALL_TEXTLIKE_EXTS = Array.from(new Set([...TEXT_EXTS, ...CODE_EXTS]));
-
-export function isTauri() {
-	return typeof window !== 'undefined' && '__TAURI_INTERNALS__' in window;
+function basename(path: string) {
+	const i = Math.max(path.lastIndexOf('/'), path.lastIndexOf('\\'));
+	return i === -1 ? path : path.slice(i + 1);
 }
 
-let cachedDialogOpen: null | ((opts?: any) => Promise<string | string[] | null>) | undefined;
+export type PickResult = { content: string; path: string } | null;
 
-async function getDialogOpen() {
-	if (cachedDialogOpen !== undefined) return cachedDialogOpen;
-	try {
-		const mod = await import('@tauri-apps/plugin-dialog');
-		cachedDialogOpen = mod.open;
-	} catch {
-		cachedDialogOpen = null;
-	}
-	return cachedDialogOpen;
+export async function pickAndReadText(): Promise<PickResult> {
+	const { open } = await getDialog();
+	const picked = await open({
+		multiple: false,
+		directory: false,
+		filters: [
+			{ name: 'Text/Markdown', extensions: TEXT_EXTS },
+			{ name: 'Code', extensions: CODE_EXTS }
+		]
+	});
+	if (!picked) return null;
+
+	const path = Array.isArray(picked) ? picked[0] : picked;
+	const { readTextFile } = await getFs();
+	const content = await readTextFile(path);
+	return { content, path };
 }
 
-function mapAcceptFromExts(exts: string[]) {
-	return { 'text/plain': exts.map((e) => '.' + e) };
-}
+export async function writeText(content: string, path?: string): Promise<string | null> {
+	const { writeTextFile } = await getFs();
 
-export async function pickAndReadText(): Promise<{ content: string; path?: string } | null> {
-	const dialogOpen = await getDialogOpen();
-
-	if (isTauri() && dialogOpen) {
-		const picked = await dialogOpen({
-			multiple: false,
-			directory: false,
+	if (!path) {
+		const { save } = await getDialog();
+		const selected = await save({
+			defaultPath: 'note.txt',
 			filters: [
 				{ name: 'Text/Markdown', extensions: TEXT_EXTS },
 				{ name: 'Code', extensions: CODE_EXTS }
 			]
 		});
-		if (!picked) return null;
-
-		const path = Array.isArray(picked) ? picked[0] : picked;
-		const content = await invoke<string>('read_file', { path });
-		return { content, path };
+		if (!selected) return null;
+		path = selected;
 	}
 
-	if (typeof window !== 'undefined' && 'showOpenFilePicker' in window) {
-		// @ts-ignore
-		const [fh] = await window.showOpenFilePicker({
-			types: [{ description: 'Text-like', accept: mapAcceptFromExts(ALL_TEXTLIKE_EXTS) }],
-			multiple: false
-		});
-		const file = await fh.getFile();
-		return { content: await file.text(), path: file.name };
-	}
-
-	const input = document.createElement('input');
-	input.type = 'file';
-	input.accept = ALL_TEXTLIKE_EXTS.map((e) => '.' + e).join(',');
-	const content = await new Promise<string | null>((resolve) => {
-		input.onchange = async () => {
-			const f = input.files?.[0];
-			resolve(f ? await f.text() : null);
-		};
-		input.click();
-	});
-	if (content == null) return null;
-	return { content };
+	await writeTextFile(path, content);
+	return path;
 }
+
+export { basename };
