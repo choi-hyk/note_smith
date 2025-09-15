@@ -42,8 +42,10 @@
 		"@monaco-editor/loader": "^1.5.0",
 		"@tauri-apps/api": "^2.8.0",
 		"@tauri-apps/plugin-dialog": "^2.4.0",
+		"@tauri-apps/plugin-fs": "^2.4.2",
 		"lucide-svelte": "^0.542.0",
 		"marked": "^16.2.1",
-		"monaco-editor": "^0.52.2"
+		"monaco-editor": "^0.52.2",
+		"uuid": "^13.0.0"
 	}
 }
