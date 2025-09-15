@@ -3,12 +3,5 @@
 	"identifier": "default",
 	"description": "enables the default permissions",
 	"windows": ["main"],
-	"permissions": [
-		"core:default",
-		"dialog:default",
-		"dialog:allow-open",
-		"dialog:allow-save",
-		"fs:read-app-specific-dirs-recursive",
-		"fs:allow-download-read-recursive"
-	]
+	"permissions": ["core:default", "dialog:default", "fs:default", "fs:allow-write-text-file"]
 }
