@@ -30,7 +30,7 @@
 				{ token: 'variable', foreground: '000000' }
 			],
 			colors: {
-				'editor.background': '#ffffff',
+				'editor.background': '#f1f5f9',
 				'editor.foreground': '#000000',
 				'editorLineNumber.foreground': '#858585'
 			}
@@ -45,7 +45,7 @@
 				{ token: 'keyword', foreground: '569CD6' }
 			],
 			colors: {
-				'editor.background': '#000000',
+				'editor.background': '#1e212e',
 				'editor.foreground': '#d4d4d4'
 			}
 		});

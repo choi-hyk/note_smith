@@ -2,3 +2,20 @@
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 @custom-variant dark (&:where(.dark, .dark *));
+@theme {
+	--color-bg: #f1f5f9;
+	--color-primary: #f8fafc;
+	--color-accent: #e2e8f0;
+	--color-fg: #1e293b;
+	--color-border: #cbd5e1;
+}
+
+:root.dark {
+	--color-bg: #1e212e;
+	--color-primary: #1e293b;
+	--color-accent: #13151f;
+	--color-fg: #e2e8f0;
+	--color-border: #e2e8f0;
+
+	--color-border: #475569;
+}

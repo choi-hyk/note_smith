@@ -14,16 +14,33 @@
 		return s.replace(/\r\n/g, '\n');
 	}
 
+	let lastDocId: string | null = null;
+	let lastDocContent: string | null = null;
+
+	$effect.pre(() => {
+		const doc = $docStore;
+		const nextContent = doc ? normalizeNewlines(doc.content) : '';
+
+		const changed = (doc?.id ?? null) !== lastDocId || nextContent !== lastDocContent;
+
+		if (changed) {
+			textValue = nextContent;
+			lastDocId = doc?.id ?? null;
+			lastDocContent = nextContent;
+		}
+	});
+
 	$effect(() => {
 		const doc = $docStore;
 		if (!doc) return;
-		textValue = normalizeNewlines(doc.content);
-		docStore.set(null);
+		if (doc.content !== textValue) {
+			docStore.set({ ...doc, content: textValue });
+		}
 	});
 </script>
 
 <section class="flex h-screen w-screen">
-	<div class="flex flex-1 flex-col border-r p-4">
+	<div class="flex flex-1 flex-col border-r-2 border-border p-4">
 		<CodeEditor bind:value={textValue} language="markdown" />
 	</div>
 
