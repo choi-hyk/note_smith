@@ -12,11 +12,13 @@
 	"app": {
 		"windows": [
 			{
-				"title": "note-smith",
-				"width": 1600,
-				"height": 1200,
+				"label": "main",
+				"title": "Note Smith",
+				"width": 1100,
+				"height": 700,
+				"decorations": false,
 				"resizable": true,
-				"fullscreen": false
+				"transparent": false
 			}
 		],
 		"security": {
