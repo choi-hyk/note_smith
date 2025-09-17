@@ -59,8 +59,8 @@
 						}}
 						role="button"
 						tabindex="0"
-						aria-label="탭 닫기"
-						title="탭 닫기"
+						aria-label="close tab"
+						title="close tab"
 					>
 						<X class="h-3 w-3" />
 					</span>

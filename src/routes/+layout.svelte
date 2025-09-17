@@ -14,11 +14,13 @@
 	import { theme, toggleTheme } from '$lib/stores/theme';
 	import { pickAndReadText } from '$lib/utils/fs';
 	import TabBar from '$lib/components/TabBar.svelte';
+	import AgentModal from '$lib/components/AgentModal.svelte';
 	import { onMount } from 'svelte';
 
 	let { children } = $props();
 	let path: string = $derived($activeTab?.path ?? 'note.txt');
 	let appWindow: ReturnType<typeof import('@tauri-apps/api/window').getCurrentWindow> | null = null;
+	let showModal = $state(false);
 
 	let stopSync: () => void;
 	$effect(() => {
@@ -140,8 +142,31 @@
 
 	<TabBar />
 
-	<main class="min-h-0 flex-1 overflow-hidden bg-bg">
+	<main class="min-h-0 flex-1 overflow-hidden bg-bg px-4">
 		{@render children?.()}
+		{#if !showModal}
+			<button
+				aria-label="Open Note Agent"
+				class="absolute right-4 bottom-16 z-50 flex h-12 w-12 items-center justify-center
+           rounded-full bg-accent text-black shadow-lg
+           hover:scale-110
+           hover:rotate-6 hover:bg-accent/80 dark:text-white"
+				onclick={() => (showModal = true)}
+				title="Note Agent"
+			>
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-9 w-9 fill-current">
+					<rect x="5" y="8" width="14" height="10" rx="2" ry="2" />
+					<circle cx="9" cy="13" r="1.5" class="fill-bg dark:fill-black" />
+					<circle cx="15" cy="13" r="1.5" class="fill-bg dark:fill-black" />
+					<line x1="12" y1="4" x2="12" y2="8" stroke="currentColor" stroke-width="2" />
+					<circle cx="12" cy="3" r="2" class="fill-current" />
+				</svg>
+			</button>
+		{/if}
+
+		{#if showModal}
+			<AgentModal onClose={() => (showModal = false)} />
+		{/if}
 	</main>
 
 	<footer

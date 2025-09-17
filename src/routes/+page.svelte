@@ -40,11 +40,11 @@
 </script>
 
 <section class="flex h-screen w-screen">
-	<div class="flex flex-1 flex-col border-r-2 border-border p-4">
+	<div class="w-1/2 border-r-2 border-border p-4">
 		<CodeEditor bind:value={textValue} language="markdown" />
 	</div>
 
-	<article class="prose max-w-none flex-1 overflow-y-auto p-4 dark:prose-invert">
+	<article class="prose w-1/2 max-w-none overflow-y-auto p-4 dark:prose-invert">
 		{@html renderedHtml}
 	</article>
 </section>
