@@ -16,6 +16,8 @@
 				"title": "Note Smith",
 				"width": 1100,
 				"height": 700,
+				"minWidth": 600,
+				"minHeight": 500,
 				"decorations": false,
 				"resizable": true,
 				"transparent": false
